@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#007BFF"/>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="apple-touch-icon" href="icon.png">
+  <title>Flight Instructor Toolkit</title>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Flight Instructor Toolkit</h1>
+    <div class="block">
+      <h2>Flight Timer <button class="small-reset" onclick="confirmClearTimer()">❌</button></h2>
+      <button class="full-width" onclick="startTimer()">Start Flight Timer</button>
+      <button class="full-width" onclick="stopTimer()">Stop Flight Timer</button>
+      <div class="output" id="flightTime">0.00 hrs | 00:00:00</div>
+      <div class="output" id="startClockDisplay">Start Time: --:--</div>
+    </div>
+    <div class="block">
+      <h2>Student Landings <button class='small-reset' onclick='confirmClearLandings()'>❌</button></h2>
+      <div class="row">
+        <button onclick="addLanding('student')">+1</button>
+        <button onclick="subtractLanding('student')">-1</button>
+      </div>
+      <div class="output" id="studentLandings">Student Landings: 0</div>
+      <h2>Instructor Landings</h2>
+      <div class="row">
+        <button onclick="addLanding('instructor')">+1</button>
+        <button onclick="subtractLanding('instructor')">-1</button>
+      </div>
+      <div class="output" id="instructorLandings">Instructor Landings: 0</div>
+    </div>
+    <div class="block">
+      <h2>Hobbs Time <button class='small-reset' onclick='confirmClearHobbs()'>❌</button></h2>
+      <input id="hobbsStart" type="number" step="0.01" placeholder="Hobbs Start" oninput="saveInput(this)">
+      <input id="hobbsEnd" type="number" step="0.01" placeholder="Hobbs End" oninput="saveInput(this)">
+      <button class="full-width" onclick="calculateHobbs()">Calculate</button>
+      <div class="output" id="hobbsResult">Hobbs Time: 0.00 hrs</div>
+    </div>
+    <div class="block">
+      <h2>Tach Time <button class='small-reset' onclick='confirmClearTach()'>❌</button></h2>
+      <input id="tachStart" type="number" step="0.01" placeholder="Tach Start" oninput="saveInput(this)">
+      <input id="tachEnd" type="number" step="0.01" placeholder="Tach End" oninput="saveInput(this)">
+      <button class="full-width" onclick="calculateTach()">Calculate</button>
+      <div class="output" id="tachResult">Tach Time: 0.00 hrs</div>
+    </div>
+    <div class="block">
+      <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
+      <input id="startTime" type="text" placeholder="Start Time (HH:MM)" oninput="saveInput(this)">
+      <input id="endTime" type="text" placeholder="End Time (HH:MM)" oninput="saveInput(this)">
+      <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
+      <div class="output" id="elapsedResult">Elapsed Time: 0.00 hrs</div>
+    </div>
+    <div class="block">
+      <button class="reset-big" onclick="confirmResetAll()">Reset All</button>
+    </div>
+  </div>
+</body>
+</html>
