@@ -62,12 +62,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd'].forEach(id => {
       const val = localStorage.getItem(id);
       if (val !== null) {
         const el = document.getElementById(id);
         el.value = val;
-        if (id === 'startTime' || id === 'endTime') {
+        if (id === 'elapsedStart' || id === 'elapsedEnd') {
           handleTimeInput(el);
         }
       }
@@ -96,8 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.replace(/\D/g, '').slice(0,4);
-    let e = document.getElementById('endTime').value.replace(/\D/g, '').slice(0,4);
+    let s = document.getElementById('elapsedStart').value.replace(/\D/g, '').slice(0,4);
+    let e = document.getElementById('elapsedEnd').value.replace(/\D/g, '').slice(0,4);
     let start = (parseInt(s.slice(0,2) || 0) * 60) + parseInt(s.slice(2) || 0);
     let end = (parseInt(e.slice(0,2) || 0) * 60) + parseInt(e.slice(2) || 0);
     if (end < start) end += 1440;
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.confirmClearElapsed = function () {
     if (confirm("Reset Elapsed Time fields?")) {
-      ['startTime','endTime'].forEach(id => {
+      ['elapsedStart','elapsedEnd'].forEach(id => {
         localStorage.removeItem(id);
         document.getElementById(id).value = '';
       });
