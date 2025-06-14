@@ -34,17 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem('isRunning', 'false');
   }
 
-  window.handleTimeInput = function(el, nextId) {
+  window.handleTimeInput = function(el) {
     let digits = el.value.replace(/\D/g, '').slice(0, 4);
     if (digits.length > 2) {
       el.value = digits.slice(0, 2) + ':' + digits.slice(2);
     } else {
       el.value = digits;
-    }
-    if (digits.length === 4 && nextId) {
-      setTimeout(() => {
-        document.getElementById(nextId).focus();
-      }, 0);
     }
   }
 
