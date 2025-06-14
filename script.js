@@ -35,9 +35,14 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.autoTab = function(el, nextId) {
-    if (el.value.length >= 2) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 2);
+    if (el.value.length === 2) {
       document.getElementById(nextId).focus();
     }
+  }
+
+  window.limitDigits = function(el) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 2);
   }
 
   function restoreInputs() {
