@@ -1,5 +1,8 @@
 
 document.addEventListener("DOMContentLoaded", function () {
+  function round2(val) {
+    return Math.round(val * 100) / 100;
+  }
   let timerInterval;
   let startTime = parseInt(localStorage.getItem('startTime')) || null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
@@ -12,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let m = Math.floor((flightSeconds % 3600) / 60);
     let s = flightSeconds % 60;
     let hours = flightSeconds / 3600;
-    let floored = Math.round(hours * 100) / 100;
+    let floored = round2(hours);
     document.getElementById('flightTime').innerText = floored.toFixed(2) + ' hrs | ' + h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
   }
 
@@ -66,14 +69,14 @@ document.addEventListener("DOMContentLoaded", function () {
   window.calculateHobbs = function () {
     let start = parseFloat(document.getElementById('hobbsStart').value) || 0;
     let end = parseFloat(document.getElementById('hobbsEnd').value) || 0;
-    let res = Math.round((end - start) * 100) / 100;
+    let res = round2(end - start);
     document.getElementById('hobbsResult').innerText = `Hobbs Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateTach = function () {
     let start = parseFloat(document.getElementById('tachStart').value) || 0;
     let end = parseFloat(document.getElementById('tachEnd').value) || 0;
-    let res = Math.round((end - start) * 100) / 100;
+    let res = round2(end - start);
     document.getElementById('tachResult').innerText = `Tach Time: ${res.toFixed(2)} hrs`;
   }
 
@@ -84,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let end = (parseInt(e.slice(0,2) || 0) * 60) + parseInt(e.slice(2) || 0);
     if (end < start) end += 1440;
     let total = (end - start) / 60;
-    let floored = Math.round(total * 100) / 100;
-    document.getElementById('elapsedResult').innerText = `Elapsed Time: ${floored.toFixed(2)} hrs`;
+    let rounded = round2(total);
+    document.getElementById('elapsedResult').innerText = `Elapsed Time: ${rounded.toFixed(2)} hrs`;
   }
 
   window.addLanding = function (type) {
