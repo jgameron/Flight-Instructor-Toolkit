@@ -52,25 +52,44 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem(el.id, el.value);
   }
 
+  window.handleTimeInput = function (el) {
+    let digits = el.value.replace(/[^0-9]/g, '');
+    if (digits.length > 4) digits = digits.slice(0, 4);
+    if (digits.length > 2) {
+      el.value = digits.slice(0, 2) + ':' + digits.slice(2);
+    } else {
+      el.value = digits;
+    }
+    saveInput(el);
+  }
+
   window.calculateHobbs = function () {
-    let start = parseFloat(document.getElementById('hobbsStart').value) || 0;
-    let end = parseFloat(document.getElementById('hobbsEnd').value) || 0;
+    let startVal = document.getElementById('hobbsStart').value.replace(/[^0-9.]/g, '');
+    let endVal = document.getElementById('hobbsEnd').value.replace(/[^0-9.]/g, '');
+    let start = parseFloat(startVal) || 0;
+    let end = parseFloat(endVal) || 0;
     let res = Math.floor((end - start) * 100) / 100;
     document.getElementById('hobbsResult').innerText = `Hobbs Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateTach = function () {
-    let start = parseFloat(document.getElementById('tachStart').value) || 0;
-    let end = parseFloat(document.getElementById('tachEnd').value) || 0;
+    let startVal = document.getElementById('tachStart').value.replace(/[^0-9.]/g, '');
+    let endVal = document.getElementById('tachEnd').value.replace(/[^0-9.]/g, '');
+    let start = parseFloat(startVal) || 0;
+    let end = parseFloat(endVal) || 0;
     let res = Math.floor((end - start) * 100) / 100;
     document.getElementById('tachResult').innerText = `Tach Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.split(':');
-    let e = document.getElementById('endTime').value.split(':');
-    let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
-    let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
+    const format = val => {
+      let digits = val.replace(/[^0-9]/g, '');
+      let h = parseInt(digits.slice(0, 2) || 0);
+      let m = parseInt(digits.slice(2, 4) || 0);
+      return h * 60 + m;
+    }
+    let start = format(document.getElementById('startTime').value);
+    let end = format(document.getElementById('endTime').value);
     if (end < start) end += 1440;
     let total = (end - start) / 60;
     let floored = Math.floor(total * 100) / 100;
