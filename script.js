@@ -34,19 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem('isRunning', 'false');
   }
 
-  window.handleTimeInput = function(el, nextId) {
-    let val = el.value.replace('.', ':');
-    val = val.replace(/[^0-9:]/g, '');
-    if (!val.includes(':') && val.length > 2) {
-      val = val.slice(0,2) + ':' + val.slice(2);
-    }
-    let parts = val.split(':');
-    if (parts[0]) parts[0] = parts[0].slice(0,2);
-    if (parts[1]) parts[1] = parts[1].slice(0,2);
-    val = parts.join(':');
-    el.value = val.slice(0,5);
-    if (el.value.length >= 5 && nextId) {
-      document.getElementById(nextId).focus();
+  window.handleHHMMInput = function(el, nextId) {
+    el.value = el.value.replace(/\D/g, '').slice(0, 4);
+    if (el.value.length >= 4 && nextId) {
+      setTimeout(() => {
+        document.getElementById(nextId).focus();
+      }, 0);
     }
   }
 
@@ -81,12 +74,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let sVal = document.getElementById('startTime').value.replace('.', ':');
-    let eVal = document.getElementById('endTime').value.replace('.', ':');
-    let s = sVal.split(':');
-    let e = eVal.split(':');
-    let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
-    let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
+    let s = document.getElementById('startTime').value.replace(/\D/g, '').slice(0,4);
+    let e = document.getElementById('endTime').value.replace(/\D/g, '').slice(0,4);
+    let start = (parseInt(s.slice(0,2) || 0) * 60) + parseInt(s.slice(2) || 0);
+    let end = (parseInt(e.slice(0,2) || 0) * 60) + parseInt(e.slice(2) || 0);
     if (end < start) end += 1440;
     let total = (end - start) / 60;
     let floored = Math.round(total * 100) / 100;
