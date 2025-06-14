@@ -37,22 +37,22 @@
     </div>
     <div class="block">
       <h2>Hobbs Time <button class='small-reset' onclick='confirmClearHobbs()'>❌</button></h2>
-      <input id="hobbsStart" type="number" step="0.01" placeholder="Hobbs Start" oninput="saveInput(this)">
-      <input id="hobbsEnd" type="number" step="0.01" placeholder="Hobbs End" oninput="saveInput(this)">
+      <input id="hobbsStart" type="text" inputmode="decimal" placeholder="Hobbs Start" oninput="saveInput(this)">
+      <input id="hobbsEnd" type="text" inputmode="decimal" placeholder="Hobbs End" oninput="saveInput(this)">
       <button class="full-width" onclick="calculateHobbs()">Calculate</button>
       <div class="output" id="hobbsResult">Hobbs Time: 0.00 hrs</div>
     </div>
     <div class="block">
       <h2>Tach Time <button class='small-reset' onclick='confirmClearTach()'>❌</button></h2>
-      <input id="tachStart" type="number" step="0.01" placeholder="Tach Start" oninput="saveInput(this)">
-      <input id="tachEnd" type="number" step="0.01" placeholder="Tach End" oninput="saveInput(this)">
+      <input id="tachStart" type="text" inputmode="decimal" placeholder="Tach Start" oninput="saveInput(this)">
+      <input id="tachEnd" type="text" inputmode="decimal" placeholder="Tach End" oninput="saveInput(this)">
       <button class="full-width" onclick="calculateTach()">Calculate</button>
       <div class="output" id="tachResult">Tach Time: 0.00 hrs</div>
     </div>
     <div class="block">
       <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
-      <input id="startTime" type="text" placeholder="Start Time (HH:MM)" oninput="saveInput(this)">
-      <input id="endTime" type="text" placeholder="End Time (HH:MM)" oninput="saveInput(this)">
+      <input id="startTime" type="text" inputmode="numeric" placeholder="Start Time (HH:MM)" oninput="handleTimeInput(this)">
+      <input id="endTime" type="text" inputmode="numeric" placeholder="End Time (HH:MM)" oninput="handleTimeInput(this)">
       <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
       <div class="output" id="elapsedResult">Elapsed Time: 0.00 hrs</div>
     </div>
