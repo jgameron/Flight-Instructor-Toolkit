@@ -4,9 +4,20 @@ document.addEventListener("DOMContentLoaded", function () {
     return Math.round(val * 100) / 100;
   }
   let timerInterval;
-  let stored = localStorage.getItem('startTime');
+  let stored = localStorage.getItem('flightStartTime');
+  if (!stored && localStorage.getItem('startTime')) {
+    stored = localStorage.getItem('startTime');
+    localStorage.setItem('flightStartTime', stored);
+    localStorage.removeItem('startTime');
+  }
   let startTime = stored && !isNaN(parseInt(stored, 10)) ? parseInt(stored, 10) : null;
-  let isRunning = localStorage.getItem('isRunning') === 'true';
+  let runningFlag = localStorage.getItem('flightIsRunning');
+  if (runningFlag === null && localStorage.getItem('isRunning') !== null) {
+    runningFlag = localStorage.getItem('isRunning');
+    localStorage.setItem('flightIsRunning', runningFlag);
+    localStorage.removeItem('isRunning');
+  }
+  let isRunning = runningFlag === 'true';
 
   (function validateTimerStore() {
     const now = Date.now();
@@ -16,8 +27,9 @@ document.addEventListener("DOMContentLoaded", function () {
       // handle corrupted or unrealistic start time data
       startTime = null;
       isRunning = false;
-      localStorage.removeItem('startTime');
-      localStorage.setItem('isRunning', 'false');
+      ['flightStartTime', 'startTime'].forEach(k => localStorage.removeItem(k));
+      localStorage.setItem('flightIsRunning', 'false');
+      localStorage.removeItem('isRunning');
       localStorage.removeItem('startClock');
     }
   })();
@@ -37,39 +49,32 @@ document.addEventListener("DOMContentLoaded", function () {
   window.startTimer = function () {
     if (!startTime) {
       startTime = Date.now();
-      localStorage.setItem('startTime', startTime);
+      localStorage.setItem('flightStartTime', startTime);
       const now = new Date();
       startClock = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
       localStorage.setItem('startClock', startClock);
     }
-    localStorage.setItem('isRunning', 'true');
+    localStorage.setItem('flightIsRunning', 'true');
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
     timerInterval = setInterval(updateFlightTimer, 1000);
   }
 
   window.stopTimer = function () {
     clearInterval(timerInterval);
-    localStorage.setItem('isRunning', 'false');
+    localStorage.setItem('flightIsRunning', 'false');
   }
 
-  window.handleTimeInput = function(el) {
-    let digits = el.value.replace(/\D/g, '').slice(0, 4);
-    if (digits.length > 2) {
-      el.value = digits.slice(0, 2) + ':' + digits.slice(2);
-    } else {
-      el.value = digits;
-    }
-  }
 
   function restoreInputs() {
     ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd'].forEach(id => {
-      const val = localStorage.getItem(id);
+      let val = localStorage.getItem(id);
       if (val !== null) {
         const el = document.getElementById(id);
-        el.value = val;
-        if (id === 'elapsedStart' || id === 'elapsedEnd') {
-          handleTimeInput(el);
+        if ((id === 'elapsedStart' || id === 'elapsedEnd') && /^\d{3,4}$/.test(val)) {
+          val = val.padStart(4, '0');
+          val = val.slice(0, 2) + ':' + val.slice(2);
         }
+        el.value = val;
       }
     });
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
@@ -96,10 +101,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('elapsedStart').value.replace(/\D/g, '').slice(0,4);
-    let e = document.getElementById('elapsedEnd').value.replace(/\D/g, '').slice(0,4);
-    let start = (parseInt(s.slice(0,2) || 0) * 60) + parseInt(s.slice(2) || 0);
-    let end = (parseInt(e.slice(0,2) || 0) * 60) + parseInt(e.slice(2) || 0);
+    const sVal = document.getElementById('elapsedStart').value;
+    const eVal = document.getElementById('elapsedEnd').value;
+    if (!sVal || !eVal) {
+      document.getElementById('elapsedResult').innerText = 'Elapsed Time: 0.00 hrs';
+      return;
+    }
+    const [sh, sm] = sVal.split(':').map(Number);
+    const [eh, em] = eVal.split(':').map(Number);
+    let start = sh * 60 + sm;
+    let end = eh * 60 + em;
     if (end < start) end += 1440;
     let total = (end - start) / 60;
     let rounded = round2(total);
@@ -125,8 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (confirm("Reset flight timer?")) {
       clearInterval(timerInterval);
       startTime = null;
-      localStorage.removeItem('startTime');
-      localStorage.removeItem('isRunning');
+      ['flightStartTime','startTime'].forEach(k => localStorage.removeItem(k));
+      ['flightIsRunning','isRunning'].forEach(k => localStorage.removeItem(k));
       localStorage.removeItem('startClock');
       document.getElementById('flightTime').innerText = '0.00 hrs | 00:00:00';
       document.getElementById('startClockDisplay').innerText = 'Start Time: --:--';
