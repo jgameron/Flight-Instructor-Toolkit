@@ -51,8 +51,8 @@
     </div>
     <div class="block">
       <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
-      <input id="startTime" type="text" placeholder="Start Time (HH:MM)" oninput="saveInput(this)">
-      <input id="endTime" type="text" placeholder="End Time (HH:MM)" oninput="saveInput(this)">
+      <input id="startTime" type="time" step="60" oninput="saveInput(this)">
+      <input id="endTime" type="time" step="60" oninput="saveInput(this)">
       <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
       <div class="output" id="elapsedResult">Elapsed Time: 0.00 hrs</div>
     </div>
