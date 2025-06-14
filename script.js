@@ -34,9 +34,14 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem('isRunning', 'false');
   }
 
-  window.handleHHMMInput = function(el, nextId) {
-    el.value = el.value.replace(/\D/g, '').slice(0, 4);
-    if (el.value.length >= 4 && nextId) {
+  window.handleTimeInput = function(el, nextId) {
+    let digits = el.value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length > 2) {
+      el.value = digits.slice(0, 2) + ':' + digits.slice(2);
+    } else {
+      el.value = digits;
+    }
+    if (digits.length === 4 && nextId) {
       setTimeout(() => {
         document.getElementById(nextId).focus();
       }, 0);
@@ -47,7 +52,11 @@ document.addEventListener("DOMContentLoaded", function () {
     ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
       const val = localStorage.getItem(id);
       if (val !== null) {
-        document.getElementById(id).value = val;
+        const el = document.getElementById(id);
+        el.value = val;
+        if (id === 'startTime' || id === 'endTime') {
+          handleTimeInput(el);
+        }
       }
     });
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
