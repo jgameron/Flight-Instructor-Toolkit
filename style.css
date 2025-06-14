@@ -12,3 +12,4 @@ button:hover { background: #0056b3; }
 input { width: calc(100% - 24px); padding: 12px; margin: 8px 0; font-size: 18px; }
 .reset-big { background: #dc3545; width: 100%; padding: 20px; font-size: 24px; }
 .reset-big:hover { background: #c82333; }
+.version { text-align: center; display: block; width: 100%; font-size: 12px; color: #666; margin: 20px auto 0; }

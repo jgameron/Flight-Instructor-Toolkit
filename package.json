@@ -1,0 +1,7 @@
+{
+  "name": "flight-instructor-toolkit",
+  "version": "1.0.14",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  }
+}
