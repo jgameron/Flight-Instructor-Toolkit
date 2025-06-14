@@ -1,13 +1,13 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   let timerInterval;
-  let startTime = parseInt(localStorage.getItem('startTime')) || null;
+  let flightStart = parseInt(localStorage.getItem('flightStart')) || null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
   let startClock = localStorage.getItem('startClock') || '--:--';
 
   function updateFlightTimer() {
-    if (!startTime) return;
-    let flightSeconds = Math.floor((Date.now() - startTime) / 1000);
+    if (!flightStart) return;
+    let flightSeconds = Math.floor((Date.now() - flightStart) / 1000);
     let h = Math.floor(flightSeconds / 3600);
     let m = Math.floor((flightSeconds % 3600) / 60);
     let s = flightSeconds % 60;
@@ -17,9 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.startTimer = function () {
-    if (!startTime) {
-      startTime = Date.now();
-      localStorage.setItem('startTime', startTime);
+    if (!flightStart) {
+      flightStart = Date.now();
+      localStorage.setItem('flightStart', flightStart);
       const now = new Date();
       startClock = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
       localStorage.setItem('startClock', startClock);
@@ -35,11 +35,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd'].forEach(id => {
       const val = localStorage.getItem(id);
-      if ((id === 'startTime' || id === 'endTime') && /^\d{1,2}:\d{2}$/.test(val)) {
+      if ((id === 'elapsedStart' || id === 'elapsedEnd') && /^\d{1,2}:\d{2}$/.test(val)) {
         document.getElementById(id).value = val;
-      } else if (id !== 'startTime' && id !== 'endTime') {
+      } else if (id !== 'elapsedStart' && id !== 'elapsedEnd') {
         document.getElementById(id).value = val || '';
       }
     });
@@ -52,25 +52,44 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem(el.id, el.value);
   }
 
+  window.handleTimeInput = function (el) {
+    let digits = el.value.replace(/[^0-9]/g, '');
+    if (digits.length > 4) digits = digits.slice(0, 4);
+    if (digits.length > 2) {
+      el.value = digits.slice(0, 2) + ':' + digits.slice(2);
+    } else {
+      el.value = digits;
+    }
+    saveInput(el);
+  }
+
   window.calculateHobbs = function () {
-    let start = parseFloat(document.getElementById('hobbsStart').value) || 0;
-    let end = parseFloat(document.getElementById('hobbsEnd').value) || 0;
+    let startVal = document.getElementById('hobbsStart').value.replace(/[^0-9.]/g, '');
+    let endVal = document.getElementById('hobbsEnd').value.replace(/[^0-9.]/g, '');
+    let start = parseFloat(startVal) || 0;
+    let end = parseFloat(endVal) || 0;
     let res = Math.floor((end - start) * 100) / 100;
     document.getElementById('hobbsResult').innerText = `Hobbs Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateTach = function () {
-    let start = parseFloat(document.getElementById('tachStart').value) || 0;
-    let end = parseFloat(document.getElementById('tachEnd').value) || 0;
+    let startVal = document.getElementById('tachStart').value.replace(/[^0-9.]/g, '');
+    let endVal = document.getElementById('tachEnd').value.replace(/[^0-9.]/g, '');
+    let start = parseFloat(startVal) || 0;
+    let end = parseFloat(endVal) || 0;
     let res = Math.floor((end - start) * 100) / 100;
     document.getElementById('tachResult').innerText = `Tach Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.split(':');
-    let e = document.getElementById('endTime').value.split(':');
-    let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
-    let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
+    const format = val => {
+      let digits = val.replace(/[^0-9]/g, '');
+      let h = parseInt(digits.slice(0, 2) || 0);
+      let m = parseInt(digits.slice(2, 4) || 0);
+      return h * 60 + m;
+    }
+    let start = format(document.getElementById('elapsedStart').value);
+    let end = format(document.getElementById('elapsedEnd').value);
     if (end < start) end += 1440;
     let total = (end - start) / 60;
     let floored = Math.floor(total * 100) / 100;
@@ -95,8 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
   window.confirmClearTimer = function () {
     if (confirm("Reset flight timer?")) {
       clearInterval(timerInterval);
-      startTime = null;
-      localStorage.removeItem('startTime');
+      flightStart = null;
+      localStorage.removeItem('flightStart');
       localStorage.removeItem('isRunning');
       localStorage.removeItem('startClock');
       document.getElementById('flightTime').innerText = '0.00 hrs | 00:00:00';
@@ -135,10 +154,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.confirmClearElapsed = function () {
     if (confirm("Reset Elapsed Time fields?")) {
-      localStorage.removeItem('startTime');
-      localStorage.removeItem('endTime');
-      document.getElementById('startTime').value = '';
-      document.getElementById('endTime').value = '';
+      localStorage.removeItem('elapsedStart');
+      localStorage.removeItem('elapsedEnd');
+      document.getElementById('elapsedStart').value = '';
+      document.getElementById('elapsedEnd').value = '';
       document.getElementById('elapsedResult').innerText = 'Elapsed Time: 0.00 hrs';
     }
   }
@@ -151,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   restoreInputs();
-  if (isRunning && startTime) {
+  if (isRunning && flightStart) {
     timerInterval = setInterval(updateFlightTimer, 1000);
   }
   updateFlightTimer();
