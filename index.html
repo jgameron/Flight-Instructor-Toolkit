@@ -51,14 +51,23 @@
     </div>
     <div class="block">
       <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
-      <input id="startTime" type="time" step="60" inputmode="numeric" oninput="saveInput(this)">
-      <input id="endTime" type="time" step="60" inputmode="numeric" oninput="saveInput(this)">
+      <div class="time-row">
+        <input id="startHour" class="time-input" type="number" inputmode="numeric" placeholder="HH" min="0" max="23" oninput="autoTab(this, 'startMin'); saveInput(this)">
+        <span>:</span>
+        <input id="startMin" class="time-input" type="number" inputmode="numeric" placeholder="MM" min="0" max="59" oninput="saveInput(this)">
+      </div>
+      <div class="time-row">
+        <input id="endHour" class="time-input" type="number" inputmode="numeric" placeholder="HH" min="0" max="23" oninput="autoTab(this, 'endMin'); saveInput(this)">
+        <span>:</span>
+        <input id="endMin" class="time-input" type="number" inputmode="numeric" placeholder="MM" min="0" max="59" oninput="saveInput(this)">
+      </div>
       <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
       <div class="output" id="elapsedResult">Elapsed Time: 0.00 hrs</div>
     </div>
     <div class="block">
       <button class="reset-big" onclick="confirmResetAll()">Reset All</button>
     </div>
+    <div class="version">v1.0.1</div>
   </div>
 </body>
 </html>

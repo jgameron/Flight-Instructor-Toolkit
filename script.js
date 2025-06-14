@@ -34,13 +34,17 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem('isRunning', 'false');
   }
 
+  window.autoTab = function(el, nextId) {
+    if (el.value.length >= 2) {
+      document.getElementById(nextId).focus();
+    }
+  }
+
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startHour','startMin','endHour','endMin'].forEach(id => {
       const val = localStorage.getItem(id);
-      if ((id === 'startTime' || id === 'endTime') && /^\d{1,2}:\d{2}$/.test(val)) {
+      if (val !== null) {
         document.getElementById(id).value = val;
-      } else if (id !== 'startTime' && id !== 'endTime') {
-        document.getElementById(id).value = val || '';
       }
     });
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
@@ -67,10 +71,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.split(':');
-    let e = document.getElementById('endTime').value.split(':');
-    let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
-    let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
+    let sh = parseInt(document.getElementById('startHour').value) || 0;
+    let sm = parseInt(document.getElementById('startMin').value) || 0;
+    let eh = parseInt(document.getElementById('endHour').value) || 0;
+    let em = parseInt(document.getElementById('endMin').value) || 0;
+    let start = sh * 60 + sm;
+    let end = eh * 60 + em;
     if (end < start) end += 1440;
     let total = (end - start) / 60;
     let floored = Math.round(total * 100) / 100;
@@ -135,10 +141,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.confirmClearElapsed = function () {
     if (confirm("Reset Elapsed Time fields?")) {
-      localStorage.removeItem('startTime');
-      localStorage.removeItem('endTime');
-      document.getElementById('startTime').value = '';
-      document.getElementById('endTime').value = '';
+      ['startHour','startMin','endHour','endMin'].forEach(id => {
+        localStorage.removeItem(id);
+        document.getElementById(id).value = '';
+      });
       document.getElementById('elapsedResult').innerText = 'Elapsed Time: 0.00 hrs';
     }
   }
