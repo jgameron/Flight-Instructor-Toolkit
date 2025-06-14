@@ -4,8 +4,14 @@ document.addEventListener("DOMContentLoaded", function () {
     return Math.round(val * 100) / 100;
   }
   let timerInterval;
-  let startTime = parseInt(localStorage.getItem('startTime')) || null;
+  let stored = localStorage.getItem('startTime');
+  let startTime = stored && !isNaN(parseInt(stored)) ? parseInt(stored, 10) : null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
+  if (startTime === null && isRunning) {
+    // handle corrupted start time data
+    isRunning = false;
+    localStorage.setItem('isRunning', 'false');
+  }
   let startClock = localStorage.getItem('startClock') || '--:--';
 
   function updateFlightTimer() {
