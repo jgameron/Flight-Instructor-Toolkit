@@ -35,10 +35,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.handleTimeInput = function(el, nextId) {
-    el.value = el.value.replace(/[^0-9:]/g, '').slice(0,5);
-    if (el.value.length === 2 && !el.value.includes(':')) {
-      el.value = el.value + ':';
+    let val = el.value.replace('.', ':');
+    val = val.replace(/[^0-9:]/g, '');
+    if (!val.includes(':') && val.length > 2) {
+      val = val.slice(0,2) + ':' + val.slice(2);
     }
+    let parts = val.split(':');
+    if (parts[0]) parts[0] = parts[0].slice(0,2);
+    if (parts[1]) parts[1] = parts[1].slice(0,2);
+    val = parts.join(':');
+    el.value = val.slice(0,5);
     if (el.value.length >= 5 && nextId) {
       document.getElementById(nextId).focus();
     }
@@ -75,8 +81,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.split(':');
-    let e = document.getElementById('endTime').value.split(':');
+    let sVal = document.getElementById('startTime').value.replace('.', ':');
+    let eVal = document.getElementById('endTime').value.replace('.', ':');
+    let s = sVal.split(':');
+    let e = eVal.split(':');
     let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
     let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
     if (end < start) end += 1440;
