@@ -34,19 +34,18 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem('isRunning', 'false');
   }
 
-  window.autoTab = function(el, nextId) {
-    el.value = el.value.replace(/\D/g, '').slice(0, 2);
-    if (el.value.length === 2) {
+  window.handleTimeInput = function(el, nextId) {
+    el.value = el.value.replace(/[^0-9:]/g, '').slice(0,5);
+    if (el.value.length === 2 && !el.value.includes(':')) {
+      el.value = el.value + ':';
+    }
+    if (el.value.length >= 5 && nextId) {
       document.getElementById(nextId).focus();
     }
   }
 
-  window.limitDigits = function(el) {
-    el.value = el.value.replace(/\D/g, '').slice(0, 2);
-  }
-
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startHour','startMin','endHour','endMin'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
       const val = localStorage.getItem(id);
       if (val !== null) {
         document.getElementById(id).value = val;
@@ -76,12 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let sh = parseInt(document.getElementById('startHour').value) || 0;
-    let sm = parseInt(document.getElementById('startMin').value) || 0;
-    let eh = parseInt(document.getElementById('endHour').value) || 0;
-    let em = parseInt(document.getElementById('endMin').value) || 0;
-    let start = sh * 60 + sm;
-    let end = eh * 60 + em;
+    let s = document.getElementById('startTime').value.split(':');
+    let e = document.getElementById('endTime').value.split(':');
+    let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
+    let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
     if (end < start) end += 1440;
     let total = (end - start) / 60;
     let floored = Math.round(total * 100) / 100;
@@ -146,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.confirmClearElapsed = function () {
     if (confirm("Reset Elapsed Time fields?")) {
-      ['startHour','startMin','endHour','endMin'].forEach(id => {
+      ['startTime','endTime'].forEach(id => {
         localStorage.removeItem(id);
         document.getElementById(id).value = '';
       });
