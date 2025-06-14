@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let startTime = stored && !isNaN(parseInt(stored, 10)) ? parseInt(stored, 10) : null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
 
-  if (isRunning) {
+  (function validateTimerStore() {
     const now = Date.now();
     const invalid = !startTime || startTime < 1000000000000 || startTime > now;
     const tooLong = startTime && now - startTime > 86400000 * 3; // 3 days
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.setItem('isRunning', 'false');
       localStorage.removeItem('startClock');
     }
-  }
+  })();
   let startClock = localStorage.getItem('startClock') || '--:--';
 
   function updateFlightTimer() {
