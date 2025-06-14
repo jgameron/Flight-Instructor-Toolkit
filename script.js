@@ -5,12 +5,21 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   let timerInterval;
   let stored = localStorage.getItem('startTime');
-  let startTime = stored && !isNaN(parseInt(stored)) ? parseInt(stored, 10) : null;
+  let startTime = stored && !isNaN(parseInt(stored, 10)) ? parseInt(stored, 10) : null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
-  if (startTime === null && isRunning) {
-    // handle corrupted start time data
-    isRunning = false;
-    localStorage.setItem('isRunning', 'false');
+
+  if (isRunning) {
+    const now = Date.now();
+    const invalid = !startTime || startTime < 1000000000000 || startTime > now;
+    const tooLong = startTime && now - startTime > 86400000 * 3; // 3 days
+    if (invalid || tooLong) {
+      // handle corrupted or unrealistic start time data
+      startTime = null;
+      isRunning = false;
+      localStorage.removeItem('startTime');
+      localStorage.setItem('isRunning', 'false');
+      localStorage.removeItem('startClock');
+    }
   }
   let startClock = localStorage.getItem('startClock') || '--:--';
 
