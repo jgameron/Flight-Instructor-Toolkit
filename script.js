@@ -1,6 +1,21 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   let timerInterval;
+
+  // Migrate old elapsed time keys if present
+  (function migrateElapsedKeys() {
+    const oldStart = localStorage.getItem('startTime');
+    if (!localStorage.getItem('elapsedStart') && /^\d{1,2}:\d{2}$/.test(oldStart)) {
+      localStorage.setItem('elapsedStart', oldStart);
+      localStorage.removeItem('startTime');
+    }
+    const oldEnd = localStorage.getItem('endTime');
+    if (!localStorage.getItem('elapsedEnd') && /^\d{1,2}:\d{2}$/.test(oldEnd)) {
+      localStorage.setItem('elapsedEnd', oldEnd);
+      localStorage.removeItem('endTime');
+    }
+  })();
+
   let startTime = parseInt(localStorage.getItem('startTime')) || null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
   let startClock = localStorage.getItem('startClock') || '--:--';
@@ -35,11 +50,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd'].forEach(id => {
       const val = localStorage.getItem(id);
-      if ((id === 'startTime' || id === 'endTime') && /^\d{1,2}:\d{2}$/.test(val)) {
+      if ((id === 'elapsedStart' || id === 'elapsedEnd') && /^\d{1,2}:\d{2}$/.test(val)) {
         document.getElementById(id).value = val;
-      } else if (id !== 'startTime' && id !== 'endTime') {
+      } else if (id !== 'elapsedStart' && id !== 'elapsedEnd') {
         document.getElementById(id).value = val || '';
       }
     });
@@ -67,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.split(':');
-    let e = document.getElementById('endTime').value.split(':');
+    let s = document.getElementById('elapsedStart').value.split(':');
+    let e = document.getElementById('elapsedEnd').value.split(':');
     let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
     let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
     if (end < start) end += 1440;
@@ -135,10 +150,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.confirmClearElapsed = function () {
     if (confirm("Reset Elapsed Time fields?")) {
-      localStorage.removeItem('startTime');
-      localStorage.removeItem('endTime');
-      document.getElementById('startTime').value = '';
-      document.getElementById('endTime').value = '';
+      localStorage.removeItem('elapsedStart');
+      localStorage.removeItem('elapsedEnd');
+      document.getElementById('elapsedStart').value = '';
+      document.getElementById('elapsedEnd').value = '';
       document.getElementById('elapsedResult').innerText = 'Elapsed Time: 0.00 hrs';
     }
   }
