@@ -1,8 +1,26 @@
 
 document.addEventListener("DOMContentLoaded", function () {
+  function round2(val) {
+    return Math.round(val * 100) / 100;
+  }
   let timerInterval;
-  let startTime = parseInt(localStorage.getItem('startTime')) || null;
+  let stored = localStorage.getItem('startTime');
+  let startTime = stored && !isNaN(parseInt(stored, 10)) ? parseInt(stored, 10) : null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
+
+  (function validateTimerStore() {
+    const now = Date.now();
+    const invalid = !startTime || startTime < 1000000000000 || startTime > now;
+    const tooLong = startTime && now - startTime > 86400000 * 3; // 3 days
+    if (invalid || tooLong) {
+      // handle corrupted or unrealistic start time data
+      startTime = null;
+      isRunning = false;
+      localStorage.removeItem('startTime');
+      localStorage.setItem('isRunning', 'false');
+      localStorage.removeItem('startClock');
+    }
+  })();
   let startClock = localStorage.getItem('startClock') || '--:--';
 
   function updateFlightTimer() {
@@ -12,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let m = Math.floor((flightSeconds % 3600) / 60);
     let s = flightSeconds % 60;
     let hours = flightSeconds / 3600;
-    let floored = Math.floor(hours * 100) / 100;
+    let floored = round2(hours);
     document.getElementById('flightTime').innerText = floored.toFixed(2) + ' hrs | ' + h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
   }
 
@@ -34,13 +52,24 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem('isRunning', 'false');
   }
 
+  window.handleTimeInput = function(el) {
+    let digits = el.value.replace(/\D/g, '').slice(0, 4);
+    if (digits.length > 2) {
+      el.value = digits.slice(0, 2) + ':' + digits.slice(2);
+    } else {
+      el.value = digits;
+    }
+  }
+
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','startTime','endTime'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd'].forEach(id => {
       const val = localStorage.getItem(id);
-      if ((id === 'startTime' || id === 'endTime') && /^\d{1,2}:\d{2}$/.test(val)) {
-        document.getElementById(id).value = val;
-      } else if (id !== 'startTime' && id !== 'endTime') {
-        document.getElementById(id).value = val || '';
+      if (val !== null) {
+        const el = document.getElementById(id);
+        el.value = val;
+        if (id === 'elapsedStart' || id === 'elapsedEnd') {
+          handleTimeInput(el);
+        }
       }
     });
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
@@ -55,26 +84,26 @@ document.addEventListener("DOMContentLoaded", function () {
   window.calculateHobbs = function () {
     let start = parseFloat(document.getElementById('hobbsStart').value) || 0;
     let end = parseFloat(document.getElementById('hobbsEnd').value) || 0;
-    let res = Math.floor((end - start) * 100) / 100;
+    let res = round2(end - start);
     document.getElementById('hobbsResult').innerText = `Hobbs Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateTach = function () {
     let start = parseFloat(document.getElementById('tachStart').value) || 0;
     let end = parseFloat(document.getElementById('tachEnd').value) || 0;
-    let res = Math.floor((end - start) * 100) / 100;
+    let res = round2(end - start);
     document.getElementById('tachResult').innerText = `Tach Time: ${res.toFixed(2)} hrs`;
   }
 
   window.calculateElapsedTime = function () {
-    let s = document.getElementById('startTime').value.split(':');
-    let e = document.getElementById('endTime').value.split(':');
-    let start = parseInt(s[0] || 0) * 60 + parseInt(s[1] || 0);
-    let end = parseInt(e[0] || 0) * 60 + parseInt(e[1] || 0);
+    let s = document.getElementById('elapsedStart').value.replace(/\D/g, '').slice(0,4);
+    let e = document.getElementById('elapsedEnd').value.replace(/\D/g, '').slice(0,4);
+    let start = (parseInt(s.slice(0,2) || 0) * 60) + parseInt(s.slice(2) || 0);
+    let end = (parseInt(e.slice(0,2) || 0) * 60) + parseInt(e.slice(2) || 0);
     if (end < start) end += 1440;
     let total = (end - start) / 60;
-    let floored = Math.floor(total * 100) / 100;
-    document.getElementById('elapsedResult').innerText = `Elapsed Time: ${floored.toFixed(2)} hrs`;
+    let rounded = round2(total);
+    document.getElementById('elapsedResult').innerText = `Elapsed Time: ${rounded.toFixed(2)} hrs`;
   }
 
   window.addLanding = function (type) {
@@ -135,10 +164,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.confirmClearElapsed = function () {
     if (confirm("Reset Elapsed Time fields?")) {
-      localStorage.removeItem('startTime');
-      localStorage.removeItem('endTime');
-      document.getElementById('startTime').value = '';
-      document.getElementById('endTime').value = '';
+      ['elapsedStart','elapsedEnd'].forEach(id => {
+        localStorage.removeItem(id);
+        document.getElementById(id).value = '';
+      });
       document.getElementById('elapsedResult').innerText = 'Elapsed Time: 0.00 hrs';
     }
   }
