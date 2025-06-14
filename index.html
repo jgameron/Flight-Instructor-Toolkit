@@ -53,12 +53,12 @@
       <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
         <div class="time-row">
           <input id="startHour" class="time-input" type="text" inputmode="numeric" pattern="\d*" maxlength="2" placeholder="HH" oninput="autoTab(this, 'startMin'); saveInput(this)">
-          <span>:</span>
-          <input id="startMin" class="time-input" type="text" inputmode="numeric" pattern="\d*" maxlength="2" placeholder="MM" oninput="limitDigits(this); saveInput(this)">
+          <span class="time-sep">:</span>
+          <input id="startMin" class="time-input" type="text" inputmode="numeric" pattern="\d*" maxlength="2" placeholder="MM" oninput="autoTab(this, 'endHour'); saveInput(this)">
         </div>
         <div class="time-row">
           <input id="endHour" class="time-input" type="text" inputmode="numeric" pattern="\d*" maxlength="2" placeholder="HH" oninput="autoTab(this, 'endMin'); saveInput(this)">
-          <span>:</span>
+          <span class="time-sep">:</span>
           <input id="endMin" class="time-input" type="text" inputmode="numeric" pattern="\d*" maxlength="2" placeholder="MM" oninput="limitDigits(this); saveInput(this)">
         </div>
       <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
@@ -67,7 +67,7 @@
     <div class="block">
       <button class="reset-big" onclick="confirmResetAll()">Reset All</button>
     </div>
-    <div class="version">v1.0.12</div>
+    <div class="version">v1.0.1</div>
   </div>
 </body>
 </html>
