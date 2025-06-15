@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let flightStart = parseInt(localStorage.getItem('flightStart')) || null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
   let startClock = localStorage.getItem('startClock') || '--:--';
+  let switchTankEnd = parseInt(localStorage.getItem('switchTankEnd')) || (Date.now() + 30 * 60 * 1000);
+  let switchInterval;
 
   function updateFlightTimer() {
     if (!flightStart) return;
@@ -14,6 +16,27 @@ document.addEventListener("DOMContentLoaded", function () {
     let hours = flightSeconds / 3600;
     let floored = Math.floor(hours * 100) / 100;
     document.getElementById('flightTime').innerText = floored.toFixed(2) + ' hrs | ' + h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+  }
+
+  function updateSwitchTankTimer() {
+    let remaining = switchTankEnd - Date.now();
+    if (remaining <= 0) {
+      alert('Time to switch fuel tanks!');
+      if (navigator.vibrate) navigator.vibrate(1000);
+      switchTankEnd = Date.now() + 30 * 60 * 1000;
+      localStorage.setItem('switchTankEnd', switchTankEnd);
+      remaining = switchTankEnd - Date.now();
+    }
+    let totalSeconds = Math.ceil(remaining / 1000);
+    let m = Math.floor(totalSeconds / 60);
+    let s = totalSeconds % 60;
+    document.getElementById('switchTankTime').innerText = 'Next Tank Switch: ' + m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+  }
+
+  window.resetSwitchTankTimer = function () {
+    switchTankEnd = Date.now() + 30 * 60 * 1000;
+    localStorage.setItem('switchTankEnd', switchTankEnd);
+    updateSwitchTankTimer();
   }
 
   window.startTimer = function () {
@@ -46,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
     document.getElementById('instructorLandings').innerText = `Instructor Landings: ${localStorage.getItem('instructorLandings') || 0}`;
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
+    updateSwitchTankTimer();
   }
 
   window.saveInput = function (el) {
@@ -174,6 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
     timerInterval = setInterval(updateFlightTimer, 1000);
   }
   updateFlightTimer();
+  switchInterval = setInterval(updateSwitchTankTimer, 1000);
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {

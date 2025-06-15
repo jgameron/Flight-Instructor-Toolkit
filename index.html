@@ -50,6 +50,10 @@
       <div class="output" id="tachResult">Tach Time: 0.00 hrs</div>
     </div>
     <div class="block">
+      <h2>Switch Tanks Timer <button class='small-reset' onclick='resetSwitchTankTimer()'>🔄</button></h2>
+      <div class="output" id="switchTankTime">Next Tank Switch: 30:00</div>
+    </div>
+    <div class="block">
       <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
       <input id="elapsedStart" type="text" inputmode="numeric" placeholder="Start Time (HH:MM)" oninput="handleTimeInput(this)">
       <input id="elapsedEnd" type="text" inputmode="numeric" placeholder="End Time (HH:MM)" oninput="handleTimeInput(this)">
@@ -60,6 +64,6 @@
       <button class="reset-big" onclick="confirmResetAll()">Reset All</button>
     </div>
   </div>
-  <footer class="version">Version 1.3</footer>
+  <footer class="version">Version 1.4</footer>
 </body>
 </html>
