@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "flight-instructor-toolkit-v9";
+const CACHE_NAME = "flight-instructor-toolkit-v10";
 const urlsToCache = [
   "./index.html",
   "./style.css",

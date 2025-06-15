@@ -1,6 +1,6 @@
 {
   "name": "flight-instructor-toolkit",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Offline PWA tools for flight instructors",
   "scripts": {
     "test": "echo \"No tests specified\""

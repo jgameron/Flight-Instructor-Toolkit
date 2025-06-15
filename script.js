@@ -4,7 +4,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let flightStart = parseInt(localStorage.getItem('flightStart')) || null;
   let isRunning = localStorage.getItem('isRunning') === 'true';
   let startClock = localStorage.getItem('startClock') || '--:--';
-  let switchTankEnd = parseInt(localStorage.getItem('switchTankEnd')) || (Date.now() + 30 * 60 * 1000);
+  let switchTankEnd = parseInt(localStorage.getItem('switchTankEnd')) || null;
+  let linkSwitchToFlight = localStorage.getItem('linkSwitchToFlight') === 'true';
   let switchInterval;
 
   function updateFlightTimer() {
@@ -18,13 +19,37 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('flightTime').innerText = floored.toFixed(2) + ' hrs | ' + h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
   }
 
+  function recalcSwitchTankEnd() {
+    if (linkSwitchToFlight) {
+      if (flightStart) {
+        let passed = Math.floor((Date.now() - flightStart) / (30 * 60 * 1000));
+        switchTankEnd = flightStart + (passed + 1) * 30 * 60 * 1000;
+      } else {
+        switchTankEnd = Date.now() + 30 * 60 * 1000;
+      }
+    } else {
+      const startVal = localStorage.getItem('elapsedStart');
+      if (startVal && /^\d{1,2}:\d{2}$/.test(startVal)) {
+        const [h, m] = startVal.split(':').map(Number);
+        const now = new Date();
+        let base = new Date();
+        base.setHours(h, m, 0, 0);
+        if (base > now) base.setDate(base.getDate() - 1);
+        let passed = Math.floor((now - base) / (30 * 60 * 1000));
+        switchTankEnd = base.getTime() + (passed + 1) * 30 * 60 * 1000;
+      } else {
+        switchTankEnd = Date.now() + 30 * 60 * 1000;
+      }
+    }
+    localStorage.setItem('switchTankEnd', switchTankEnd);
+  }
+
   function updateSwitchTankTimer() {
     let remaining = switchTankEnd - Date.now();
     if (remaining <= 0) {
       alert('Time to switch fuel tanks!');
       if (navigator.vibrate) navigator.vibrate(1000);
-      switchTankEnd = Date.now() + 30 * 60 * 1000;
-      localStorage.setItem('switchTankEnd', switchTankEnd);
+      recalcSwitchTankEnd();
       remaining = switchTankEnd - Date.now();
     }
     let totalSeconds = Math.ceil(remaining / 1000);
@@ -46,6 +71,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const now = new Date();
       startClock = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
       localStorage.setItem('startClock', startClock);
+      if (linkSwitchToFlight) {
+        recalcSwitchTankEnd();
+      }
     }
     localStorage.setItem('isRunning', 'true');
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
@@ -69,6 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
     document.getElementById('instructorLandings').innerText = `Instructor Landings: ${localStorage.getItem('instructorLandings') || 0}`;
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
+    document.getElementById('linkSwitchToFlight').checked = linkSwitchToFlight;
+    recalcSwitchTankEnd();
     updateSwitchTankTimer();
   }
 
@@ -85,6 +115,9 @@ document.addEventListener("DOMContentLoaded", function () {
       el.value = digits;
     }
     saveInput(el);
+    if (el.id === 'elapsedStart' && !linkSwitchToFlight) {
+      recalcSwitchTankEnd();
+    }
   }
 
   window.calculateHobbs = function () {
@@ -144,6 +177,10 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.removeItem('startClock');
       document.getElementById('flightTime').innerText = '0.00 hrs | 00:00:00';
       document.getElementById('startClockDisplay').innerText = 'Start Time: --:--';
+      if (linkSwitchToFlight) {
+        recalcSwitchTankEnd();
+        updateSwitchTankTimer();
+      }
     }
   }
 
@@ -194,6 +231,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   restoreInputs();
+  document.getElementById('linkSwitchToFlight').addEventListener('change', function() {
+    linkSwitchToFlight = this.checked;
+    localStorage.setItem('linkSwitchToFlight', linkSwitchToFlight);
+    recalcSwitchTankEnd();
+    updateSwitchTankTimer();
+  });
   if (isRunning && flightStart) {
     timerInterval = setInterval(updateFlightTimer, 1000);
   }
