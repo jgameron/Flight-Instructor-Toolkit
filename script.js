@@ -35,17 +35,23 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function restoreInputs() {
-    ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd'].forEach(id => {
+    ['hobbsStart','hobbsEnd','tachStart','tachEnd','elapsedStart','elapsedEnd','fuelStart','fuelEnd','fuelType'].forEach(id => {
       const val = localStorage.getItem(id);
-      if ((id === 'elapsedStart' || id === 'elapsedEnd') && /^\d{1,2}:\d{2}$/.test(val)) {
+      if (!val) return;
+      if (id === 'fuelType') {
+        document.getElementById(id).value = val;
+      } else if ((id === 'elapsedStart' || id === 'elapsedEnd') && /^\d{1,2}:\d{2}$/.test(val)) {
         document.getElementById(id).value = val;
       } else if (id !== 'elapsedStart' && id !== 'elapsedEnd') {
-        document.getElementById(id).value = val || '';
+        document.getElementById(id).value = val;
       }
     });
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
     document.getElementById('instructorLandings').innerText = `Instructor Landings: ${localStorage.getItem('instructorLandings') || 0}`;
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
+    updateHobbs();
+    updateTach();
+    updateFuel();
   }
 
   window.saveInput = function (el) {
@@ -63,22 +69,36 @@ document.addEventListener("DOMContentLoaded", function () {
     saveInput(el);
   }
 
-  window.calculateHobbs = function () {
-    let startVal = document.getElementById('hobbsStart').value.replace(/[^0-9.]/g, '');
-    let endVal = document.getElementById('hobbsEnd').value.replace(/[^0-9.]/g, '');
-    let start = parseFloat(startVal) || 0;
-    let end = parseFloat(endVal) || 0;
+  function parseDecimal(val) {
+    return parseFloat(val.replace(/[^0-9.]/g, '')) || 0;
+  }
+
+  window.updateHobbs = function () {
+    let start = parseDecimal(document.getElementById('hobbsStart').value);
+    let end = parseDecimal(document.getElementById('hobbsEnd').value);
     let res = Math.floor((end - start) * 100) / 100;
     document.getElementById('hobbsResult').innerText = `Hobbs Time: ${res.toFixed(2)} hrs`;
   }
 
-  window.calculateTach = function () {
-    let startVal = document.getElementById('tachStart').value.replace(/[^0-9.]/g, '');
-    let endVal = document.getElementById('tachEnd').value.replace(/[^0-9.]/g, '');
-    let start = parseFloat(startVal) || 0;
-    let end = parseFloat(endVal) || 0;
+  window.updateTach = function () {
+    let start = parseDecimal(document.getElementById('tachStart').value);
+    let end = parseDecimal(document.getElementById('tachEnd').value);
     let res = Math.floor((end - start) * 100) / 100;
     document.getElementById('tachResult').innerText = `Tach Time: ${res.toFixed(2)} hrs`;
+  }
+
+  window.updateFuel = function () {
+    const type = document.getElementById('fuelType').value;
+    const density = type === 'JetA' ? 6.7 : 6.0;
+    let start = parseDecimal(document.getElementById('fuelStart').value);
+    let end = parseDecimal(document.getElementById('fuelEnd').value);
+    let startW = start * density;
+    let endW = end * density;
+    document.getElementById('fuelStartWeight').innerText = `${startW.toFixed(1)} lbs`;
+    document.getElementById('fuelEndWeight').innerText = `${endW.toFixed(1)} lbs`;
+    let used = Math.max(0, start - end);
+    let usedW = used * density;
+    document.getElementById('fuelResult').innerText = `Fuel Used: ${used.toFixed(2)} USG | ${usedW.toFixed(1)} lbs`;
   }
 
   window.calculateElapsedTime = function () {
@@ -149,6 +169,18 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById('tachStart').value = '';
       document.getElementById('tachEnd').value = '';
       document.getElementById('tachResult').innerText = 'Tach Time: 0.00 hrs';
+    }
+  }
+
+  window.confirmClearFuel = function () {
+    if (confirm("Reset Fuel fields?")) {
+      ['fuelStart','fuelEnd','fuelType'].forEach(k => localStorage.removeItem(k));
+      document.getElementById('fuelStart').value = '';
+      document.getElementById('fuelEnd').value = '';
+      document.getElementById('fuelType').value = '100LL';
+      document.getElementById('fuelStartWeight').innerText = '0 lbs';
+      document.getElementById('fuelEndWeight').innerText = '0 lbs';
+      document.getElementById('fuelResult').innerText = 'Fuel Used: 0.00 USG | 0 lbs';
     }
   }
 

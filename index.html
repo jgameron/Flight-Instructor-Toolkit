@@ -37,22 +37,59 @@
     </div>
     <div class="block">
       <h2>Hobbs Time <button class='small-reset' onclick='confirmClearHobbs()'>❌</button></h2>
-      <input id="hobbsStart" type="text" inputmode="decimal" placeholder="Hobbs Start" oninput="saveInput(this)">
-      <input id="hobbsEnd" type="text" inputmode="decimal" placeholder="Hobbs End" oninput="saveInput(this)">
-      <button class="full-width" onclick="calculateHobbs()">Calculate</button>
+      <div class="field">
+        <label for="hobbsStart">Start</label>
+        <input id="hobbsStart" type="text" inputmode="decimal" placeholder="0.0" oninput="saveInput(this); updateHobbs();">
+      </div>
+      <div class="field">
+        <label for="hobbsEnd">End</label>
+        <input id="hobbsEnd" type="text" inputmode="decimal" placeholder="0.0" oninput="saveInput(this); updateHobbs();">
+      </div>
       <div class="output" id="hobbsResult">Hobbs Time: 0.00 hrs</div>
     </div>
     <div class="block">
       <h2>Tach Time <button class='small-reset' onclick='confirmClearTach()'>❌</button></h2>
-      <input id="tachStart" type="text" inputmode="decimal" placeholder="Tach Start" oninput="saveInput(this)">
-      <input id="tachEnd" type="text" inputmode="decimal" placeholder="Tach End" oninput="saveInput(this)">
-      <button class="full-width" onclick="calculateTach()">Calculate</button>
+      <div class="field">
+        <label for="tachStart">Start</label>
+        <input id="tachStart" type="text" inputmode="decimal" placeholder="0.0" oninput="saveInput(this); updateTach();">
+      </div>
+      <div class="field">
+        <label for="tachEnd">End</label>
+        <input id="tachEnd" type="text" inputmode="decimal" placeholder="0.0" oninput="saveInput(this); updateTach();">
+      </div>
       <div class="output" id="tachResult">Tach Time: 0.00 hrs</div>
     </div>
     <div class="block">
+      <h2>Fuel Usage <button class='small-reset' onclick='confirmClearFuel()'>❌</button></h2>
+      <div class="field">
+        <label for="fuelType">Fuel Type</label>
+        <select id="fuelType" oninput="saveInput(this); updateFuel();">
+          <option value="100LL">100LL</option>
+          <option value="JetA">Jet A</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="fuelStart">Start (USG)</label>
+        <input id="fuelStart" type="text" inputmode="decimal" placeholder="0.0" oninput="saveInput(this); updateFuel();">
+        <span id="fuelStartWeight">0 lbs</span>
+      </div>
+      <div class="field">
+        <label for="fuelEnd">End (USG)</label>
+        <input id="fuelEnd" type="text" inputmode="decimal" placeholder="0.0" oninput="saveInput(this); updateFuel();">
+        <span id="fuelEndWeight">0 lbs</span>
+      </div>
+      <div class="output" id="fuelResult">Fuel Used: 0.00 USG | 0 lbs</div>
+    </div>
+    <div class="block">
       <h2>Elapsed Time <button class='small-reset' onclick='confirmClearElapsed()'>❌</button></h2>
-      <input id="elapsedStart" type="text" inputmode="numeric" placeholder="Start Time (HH:MM)" oninput="handleTimeInput(this)">
-      <input id="elapsedEnd" type="text" inputmode="numeric" placeholder="End Time (HH:MM)" oninput="handleTimeInput(this)">
+      <div class="field">
+        <label for="elapsedStart">Start</label>
+        <input id="elapsedStart" type="text" inputmode="numeric" placeholder="HH:MM" oninput="handleTimeInput(this)">
+      </div>
+      <div class="field">
+        <label for="elapsedEnd">End</label>
+        <input id="elapsedEnd" type="text" inputmode="numeric" placeholder="HH:MM" oninput="handleTimeInput(this)">
+      </div>
       <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
       <div class="output" id="elapsedResult">Elapsed Time: 0.00 hrs</div>
     </div>
