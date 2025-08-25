@@ -1,15 +1,180 @@
+/* Theme variables */
+:root {
+  --bg: #0d1117;
+  --surface: rgba(31, 36, 45, 0.8);
+  --accent: #ff9800;
+  --text: #e6e6e6;
+}
 
-body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: auto; background: white; padding: 20px; margin-top: 20px; border-radius: 10px; }
-h1, h2 { text-align: center; }
-.block { background: #e8e8e8; padding: 20px; margin: 20px 0; border-radius: 8px; }
-.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-button { padding: 15px; font-size: 20px; flex: 1; border: none; border-radius: 5px; background: #007BFF; color: white; }
-button:hover { background: #0056b3; }
-.small-reset { background: none; border: none; color: red; font-size: 18px; float: right; margin-top: -10px; margin-right: -10px; }
-.full-width { width: 100%; margin-top: 10px; font-size: 20px; }
-.output { text-align: center; font-size: 22px; margin-top: 12px; }
-input { width: calc(100% - 24px); padding: 12px; margin: 8px 0; font-size: 18px; }
-.reset-big { background: #dc3545; width: 100%; padding: 20px; font-size: 24px; }
-.reset-big:hover { background: #c82333; }
-.version { text-align: center; margin-top: 10px; color: #555; }
+body {
+  font-family: 'Chakra Petch', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,152,0,0.05), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(0,216,255,0.05), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 40px);
+  z-index: -1;
+}
+
+.topbar {
+  background: rgba(22, 27, 34, 0.9);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid #0b0f14;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+}
+
+.topbar .accent {
+  color: var(--accent);
+}
+
+.topbar .tagline {
+  font-family: 'Share Tech Mono', monospace;
+  color: #8899a6;
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+}
+
+.grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 152, 0, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.card h2 {
+  font-family: 'Orbitron', sans-serif;
+  margin-top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 12px;
+  font-size: 1rem;
+  flex: 1;
+  border: none;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #ffb000, var(--accent));
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s, transform 0.1s;
+}
+
+button:hover {
+  background: linear-gradient(180deg, #ffc107, #e68900);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+button:active {
+  transform: translateY(2px);
+}
+
+.small-reset {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.small-reset:hover {
+  color: #ff7875;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.output {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 12px;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  font-size: 1rem;
+  background: #2d333b;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.reset-big {
+  background: #ff4d4f;
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.reset-big:hover {
+  background: #d9363e;
+  box-shadow: 0 0 8px #ff4d4f;
+}
+
+.reset-big:active {
+  transform: translateY(2px);
+}
+
+.version {
+  text-align: center;
+  padding: 10px;
+  background: #161b22;
+  color: #7a7a7a;
+  font-family: 'Share Tech Mono', monospace;
+}
