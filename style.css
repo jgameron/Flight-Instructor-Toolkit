@@ -1,15 +1,91 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #121826;
+  color: #f0f0f0;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: #1c2433;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+h1,
+h2 {
+  text-align: center;
+  color: #f0f0f0;
+}
+.block {
+  background: #2a3344;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+}
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+button {
+  padding: 15px;
+  font-size: 20px;
+  flex: 1;
+  border: none;
+  border-radius: 5px;
+  background: #28a745;
+  color: #fff;
+}
+button:hover {
+  background: #218838;
+}
+.small-reset {
+  background: none;
+  border: none;
+  color: #ffc107;
+  font-size: 18px;
+  float: right;
+  margin-top: -10px;
+  margin-right: -10px;
+}
+.full-width {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 20px;
+}
+.output {
+  text-align: center;
+  font-size: 22px;
+  margin-top: 12px;
+}
+input {
+  width: calc(100% - 24px);
+  padding: 12px;
+  margin: 8px 0;
+  font-size: 18px;
+  background: #1c2433;
+  border: 1px solid #3c4a64;
+  color: #f0f0f0;
+}
+.reset-big {
+  background: #ffc107;
+  color: #000;
+  width: 100%;
+  padding: 20px;
+  font-size: 24px;
+}
+.reset-big:hover {
+  background: #e0a800;
+}
+.version {
+  text-align: center;
+  margin-top: 10px;
+  color: #aaa;
+}
 
-body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: auto; background: white; padding: 20px; margin-top: 20px; border-radius: 10px; }
-h1, h2 { text-align: center; }
-.block { background: #e8e8e8; padding: 20px; margin: 20px 0; border-radius: 8px; }
-.row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-button { padding: 15px; font-size: 20px; flex: 1; border: none; border-radius: 5px; background: #007BFF; color: white; }
-button:hover { background: #0056b3; }
-.small-reset { background: none; border: none; color: red; font-size: 18px; float: right; margin-top: -10px; margin-right: -10px; }
-.full-width { width: 100%; margin-top: 10px; font-size: 20px; }
-.output { text-align: center; font-size: 22px; margin-top: 12px; }
-input { width: calc(100% - 24px); padding: 12px; margin: 8px 0; font-size: 18px; }
-.reset-big { background: #dc3545; width: 100%; padding: 20px; font-size: 24px; }
-.reset-big:hover { background: #c82333; }
-.version { text-align: center; margin-top: 10px; color: #555; }
+::placeholder {
+  color: #b0b0b0;
+}
