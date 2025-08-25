@@ -1,35 +1,41 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   background: #121826;
   color: #f0f0f0;
   margin: 0;
-  padding: 0;
 }
+
 .container {
-  max-width: 600px;
-  margin: auto;
-  background: #1c2433;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto;
   padding: 20px;
-  margin-top: 20px;
-  border-radius: 10px;
 }
-h1,
+
+.container h1 {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
 h2 {
   text-align: center;
-  color: #f0f0f0;
 }
+
 .block {
-  background: #2a3344;
+  background: #1c2433;
   padding: 20px;
-  margin: 20px 0;
   border-radius: 8px;
 }
+
 .row {
   display: flex;
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
 }
+
 button {
   padding: 15px;
   font-size: 20px;
@@ -39,9 +45,28 @@ button {
   background: #28a745;
   color: #fff;
 }
+
 button:hover {
   background: #218838;
 }
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.active {
+  background: #555;
+}
+
+#stopBtn {
+  background: #dc3545;
+}
+
+#stopBtn:hover {
+  background: #c82333;
+}
+
 .small-reset {
   background: none;
   border: none;
@@ -51,25 +76,29 @@ button:hover {
   margin-top: -10px;
   margin-right: -10px;
 }
+
 .full-width {
   width: 100%;
   margin-top: 10px;
   font-size: 20px;
 }
+
 .output {
   text-align: center;
   font-size: 22px;
   margin-top: 12px;
 }
+
 input {
   width: calc(100% - 24px);
   padding: 12px;
   margin: 8px 0;
   font-size: 18px;
-  background: #1c2433;
+  background: #121826;
   border: 1px solid #3c4a64;
   color: #f0f0f0;
 }
+
 .reset-big {
   background: #ffc107;
   color: #000;
@@ -77,9 +106,11 @@ input {
   padding: 20px;
   font-size: 24px;
 }
+
 .reset-big:hover {
   background: #e0a800;
 }
+
 .version {
   text-align: center;
   margin-top: 10px;

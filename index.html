@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#121826" />
     <link rel="manifest" href="manifest.json" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
     <link rel="apple-touch-icon" href="icon.png" />
     <title>Flight Instructor Toolkit</title>
@@ -18,10 +22,10 @@
           Flight Timer
           <button class="small-reset" onclick="confirmClearTimer()">❌</button>
         </h2>
-        <button class="full-width" onclick="startTimer()">
+        <button id="startBtn" class="full-width" onclick="startTimer()">
           Start Flight Timer
         </button>
-        <button class="full-width" onclick="stopTimer()">
+        <button id="stopBtn" class="full-width" onclick="stopTimer()">
           Stop Flight Timer
         </button>
         <div class="output" id="flightTime">0.00 hrs | 00:00:00</div>
