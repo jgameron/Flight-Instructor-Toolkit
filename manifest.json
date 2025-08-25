@@ -1,11 +1,10 @@
-
 {
   "name": "Flight Instructor Toolkit",
   "short_name": "Toolkit",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#007BFF",
+  "background_color": "#121826",
+  "theme_color": "#121826",
   "icons": [
     {
       "src": "icon.png",
