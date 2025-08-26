@@ -1,19 +1,31 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   let timerInterval;
+  let pauseInterval;
   let flightStart = parseInt(localStorage.getItem('flightStart')) || null;
+  let pauseStart = parseInt(localStorage.getItem('pauseStart')) || null;
+  let pauseDuration = parseInt(localStorage.getItem('pauseDuration')) || 0;
   let isRunning = localStorage.getItem('isRunning') === 'true';
   let startClock = localStorage.getItem('startClock') || '--:--';
 
+  function formatTime(totalSeconds) {
+    let h = Math.floor(totalSeconds / 3600);
+    let m = Math.floor((totalSeconds % 3600) / 60);
+    let s = totalSeconds % 60;
+    return h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+  }
+
   function updateFlightTimer() {
     if (!flightStart) return;
-    let flightSeconds = Math.floor((Date.now() - flightStart) / 1000);
-    let h = Math.floor(flightSeconds / 3600);
-    let m = Math.floor((flightSeconds % 3600) / 60);
-    let s = flightSeconds % 60;
-    let hours = flightSeconds / 3600;
-    let floored = Math.floor(hours * 100) / 100;
-    document.getElementById('flightTime').innerText = floored.toFixed(2) + ' hrs | ' + h.toString().padStart(2, '0') + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+    let elapsedMs = Date.now() - flightStart - pauseDuration;
+    let flightSeconds = Math.floor(elapsedMs / 1000);
+    document.getElementById('flightTime').innerText = formatTime(flightSeconds);
+  }
+
+  function updatePauseTimer() {
+    let totalPaused = pauseDuration + (pauseStart ? Date.now() - pauseStart : 0);
+    let pausedSeconds = Math.floor(totalPaused / 1000);
+    document.getElementById('pauseTime').innerText = 'Pause Time: ' + formatTime(pausedSeconds);
   }
 
   window.startTimer = function () {
@@ -24,14 +36,29 @@ document.addEventListener("DOMContentLoaded", function () {
       startClock = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
       localStorage.setItem('startClock', startClock);
     }
+    if (pauseStart) {
+      pauseDuration += Date.now() - pauseStart;
+      localStorage.setItem('pauseDuration', pauseDuration);
+      pauseStart = null;
+      localStorage.removeItem('pauseStart');
+    }
     localStorage.setItem('isRunning', 'true');
+    isRunning = true;
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
+    updateFlightTimer();
+    updatePauseTimer();
     timerInterval = setInterval(updateFlightTimer, 1000);
   }
 
   window.stopTimer = function () {
     clearInterval(timerInterval);
     localStorage.setItem('isRunning', 'false');
+    isRunning = false;
+    if (!pauseStart) {
+      pauseStart = Date.now();
+      localStorage.setItem('pauseStart', pauseStart);
+    }
+    updatePauseTimer();
   }
 
   function restoreInputs() {
@@ -46,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('studentLandings').innerText = `Student Landings: ${localStorage.getItem('studentLandings') || 0}`;
     document.getElementById('instructorLandings').innerText = `Instructor Landings: ${localStorage.getItem('instructorLandings') || 0}`;
     document.getElementById('startClockDisplay').innerText = 'Start Time: ' + startClock;
+    updatePauseTimer();
   }
 
   window.saveInput = function (el) {
@@ -91,9 +119,10 @@ document.addEventListener("DOMContentLoaded", function () {
     let start = format(document.getElementById('elapsedStart').value);
     let end = format(document.getElementById('elapsedEnd').value);
     if (end < start) end += 1440;
-    let total = (end - start) / 60;
-    let floored = Math.floor(total * 100) / 100;
-    document.getElementById('elapsedResult').innerText = `Elapsed Time: ${floored.toFixed(2)} hrs`;
+    let diffMinutes = end - start;
+    let h = Math.floor(diffMinutes / 60);
+    let m = diffMinutes % 60;
+    document.getElementById('elapsedResult').innerText = `Elapsed Time: ${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:00`;
   }
 
   window.addLanding = function (type) {
@@ -115,11 +144,17 @@ document.addEventListener("DOMContentLoaded", function () {
     if (confirm("Reset flight timer?")) {
       clearInterval(timerInterval);
       flightStart = null;
+      pauseStart = null;
+      pauseDuration = 0;
       localStorage.removeItem('flightStart');
       localStorage.removeItem('isRunning');
       localStorage.removeItem('startClock');
-      document.getElementById('flightTime').innerText = '0.00 hrs | 00:00:00';
+      localStorage.removeItem('pauseStart');
+      localStorage.removeItem('pauseDuration');
+      document.getElementById('flightTime').innerText = '00:00:00';
       document.getElementById('startClockDisplay').innerText = 'Start Time: --:--';
+      document.getElementById('pauseTime').innerText = 'Pause Time: 00:00:00';
+      isRunning = false;
     }
   }
 
@@ -158,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.removeItem('elapsedEnd');
       document.getElementById('elapsedStart').value = '';
       document.getElementById('elapsedEnd').value = '';
-      document.getElementById('elapsedResult').innerText = 'Elapsed Time: 0.00 hrs';
+      document.getElementById('elapsedResult').innerText = 'Elapsed Time: 00:00:00';
     }
   }
 
@@ -173,7 +208,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (isRunning && flightStart) {
     timerInterval = setInterval(updateFlightTimer, 1000);
   }
+  pauseInterval = setInterval(updatePauseTimer, 1000);
   updateFlightTimer();
+  updatePauseTimer();
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {

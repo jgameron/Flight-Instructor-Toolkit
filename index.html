@@ -18,8 +18,9 @@
       <h2>Flight Timer <button class="small-reset" onclick="confirmClearTimer()">❌</button></h2>
       <button class="full-width" onclick="startTimer()">Start Flight Timer</button>
       <button class="full-width" onclick="stopTimer()">Stop Flight Timer</button>
-      <div class="output" id="flightTime">0.00 hrs | 00:00:00</div>
-      <div class="output" id="startClockDisplay">Start Time: --:--</div>
+        <div class="output" id="flightTime">00:00:00</div>
+        <div class="output" id="startClockDisplay">Start Time: --:--</div>
+        <div class="output" id="pauseTime">Pause Time: 00:00:00</div>
     </div>
     <div class="block">
       <h2>Student Landings <button class='small-reset' onclick='confirmClearLandings()'>❌</button></h2>
@@ -54,7 +55,7 @@
       <input id="elapsedStart" type="text" inputmode="numeric" placeholder="Start Time (HH:MM)" oninput="handleTimeInput(this)">
       <input id="elapsedEnd" type="text" inputmode="numeric" placeholder="End Time (HH:MM)" oninput="handleTimeInput(this)">
       <button class="full-width" onclick="calculateElapsedTime()">Calculate</button>
-      <div class="output" id="elapsedResult">Elapsed Time: 0.00 hrs</div>
+        <div class="output" id="elapsedResult">Elapsed Time: 00:00:00</div>
     </div>
     <div class="block">
       <button class="reset-big" onclick="confirmResetAll()">Reset All</button>
